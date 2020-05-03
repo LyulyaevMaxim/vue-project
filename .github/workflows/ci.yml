@@ -14,8 +14,8 @@ jobs:
         id: format
         run: yarn format:check && echo ::set-output name=status::success
 
-      - name: JS
-        id: js
+      - name: Linting
+        id: lint
         continue-on-error: true
         run: yarn lint && echo ::set-output name=status::success
 
@@ -39,7 +39,7 @@ jobs:
       - name: E2E
         id: e2e
         continue-on-error: true
-        run: yarn test:e2e && echo ::set-output name=status::success
+        run: yarn test:e2e --headless && echo ::set-output name=status::success
 
       - name: Check on failures
         if: steps.unit.outputs.status != 'success' || steps.e2e.outputs.status != 'success'
