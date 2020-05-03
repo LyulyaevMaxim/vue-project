@@ -7,6 +7,8 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
+    "format:check": "prettier --check . --ignore-path './.prettierignore'",
+    "format:fix": "prettier --write . --ignore-path './.prettierignore'",
     "build": "vue-cli-service build --modern",
     "serve:prod": "vue-cli-service serve -s dist --mode=production --https=true",
     "upgrade-packages": "yarn ncu -ui"
@@ -40,7 +42,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^6.2.2",
     "lint-staged": "^9.5.0",
-    "prettier": "^1.19.1",
+    "prettier": "2.0.5",
     "sass": "^1.26.3",
     "sass-loader": "^8.0.2",
     "typescript": "~3.8.3",
@@ -48,7 +50,8 @@
   },
   "optionalDependencies": {
     "@vue/cli": "^4.3.1",
-    "npm-check-updates": "4.1.2"
+    "npm-check-updates": "4.1.2",
+    "netlify-cli": "2.48.0"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
