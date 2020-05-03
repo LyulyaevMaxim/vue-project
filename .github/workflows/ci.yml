@@ -1,0 +1,61 @@
+name: CI
+on: [pull_request, push]
+
+jobs:
+  linters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Installing Dependencies
+        run: yarn
+
+      - name: Formatting
+        id: format
+        run: yarn format:check && echo ::set-output name=status::success
+
+      - name: JS
+        id: js
+        continue-on-error: true
+        run: yarn lint && echo ::set-output name=status::success
+
+      - name: Check on failures
+        if: steps.format.outputs.status != 'success' || steps.lint.outputs.status != 'success'
+        run: echo ${{ toJson(steps) }} && exit 1
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Installing Dependencies
+        run: yarn
+
+      - name: Unit
+        id: unit
+        continue-on-error: true
+        run: yarn test:unit && echo ::set-output name=status::success
+
+      - name: E2E
+        id: e2e
+        continue-on-error: true
+        run: yarn test:e2e && echo ::set-output name=status::success
+
+      - name: Check on failures
+        if: steps.unit.outputs.status != 'success' || steps.e2e.outputs.status != 'success'
+        run: echo ${{ toJson(steps) }} && exit 1
+
+  deploy:
+    needs: [linters, tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Installing Dependencies
+        run: yarn
+
+      - name: Building application
+        run: yarn build
+
+      - name: Deploying application
+        run: yarn netlify-cli deploy -s ${{ secrets.NETLIFY_SITE_ID }} --auth ${{ secrets.NETLIFY_ACCESS_TOKEN }}
